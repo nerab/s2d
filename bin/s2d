@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+Bundler.require
+
+require 'openssl'
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
+class Message
+  attr_accessor :subject, :body
+
+  def initialize(subject = "from #{%x[hostname].chomp}:", body = nil)
+    @subject, @body = subject, body
+  end
+
+  def valid?
+    valid?
+  end
+
+  def invalid?
+    @subject.nil? || @body.nil? || @subject.empty? || @body.empty?
+  end
+end
+
+class ProwlerTransport
+  def initialize(api_key)
+    @prowler = Prowler.new(:application => $0, :api_key => api_key)
+  end
+
+  def deliver(message)
+    @prowler.notify(message.subject, message.body)
+  end
+end
+
+class Device
+  extend Forwardable
+  def_delegator :transport, :deliver
+
+  class << self
+    def lookup(alyas)
+      devices = {}
+
+        # replace with lookup from user config directory
+        iPhone = Device.new('iPhone Nico')
+        iPhone.transport = ProwlerTransport.new('fa87a45523a8e75e572654d04f5249e1c1b694ef')
+        devices['2iphone'] = iPhone
+
+      # regular lookup
+      devices[alyas]
+    end
+  end
+
+  attr_reader :name
+  attr_accessor :transport
+
+  def initialize(name)
+    @name = name
+  end
+end
+
+device = File.basename($0)
+target = Device.lookup(device)
+
+if target.nil?
+  STDERR.puts "Device #{device} not configured"
+  exit 1
+end
+
+message = Message.new
+
+if ARGV.size > 0
+  message.body = ARGV.join(' ')
+else
+  puts 'Type your message and end with Control-D.'
+  message.body = ARGF.read
+end
+
+if message.invalid?
+  STDERR.puts "Invalid message"
+  exit 1
+else
+  target.deliver(message)
+end
