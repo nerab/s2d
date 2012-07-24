@@ -8,6 +8,10 @@ module S2D
             h[:config] = transport.config
           end
         end
+
+        def to_object(h)
+          h[:name].new(h[:config])
+        end
       end
     end
   end

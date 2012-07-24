@@ -8,6 +8,12 @@ module S2D
             h[:transport] = TransportMapper.to_hash(device.transport)
           end
         end
+
+        def to_object(h)
+          Device.new(h[:name]).tap do |d|
+            d.transport = TransportMapper.to_object(h[:transport])
+          end
+        end
       end
     end
   end

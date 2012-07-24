@@ -20,7 +20,17 @@ module S2D
       end
 
       def devices
-        @data[:devices]
+        @data[:devices].keys
+      end
+
+      def device(key)
+        selected = @data[:devices][key]
+
+        if selected.nil?
+          nil
+        else
+          Mappers::DeviceMapper.to_object(selected)
+        end
       end
 
       def add_device(device, activate = false)
@@ -30,17 +40,12 @@ module S2D
       end
 
       def active_device
-        default = devices[:default]
-
-        if default.nil?
-          raise "No default profile set"
-        else
-          devices[default]
-        end
+        device(:default)
       end
 
       def active_device=(device)
-        devices[:default] = device.name.to_sym
+        add_device(device, false) unless device(device.name.to_sym)
+        @data[:devices][:default] = device.name.to_sym
         write
       end
 

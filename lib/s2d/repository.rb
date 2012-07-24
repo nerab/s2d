@@ -19,10 +19,6 @@ module S2D
         default_structure
       end
 
-      def devices
-        @data[:devices]
-      end
-
       def add_device(device, activate = false)
         @data[:devices][device.name.to_sym] = Mappers::DeviceMapper.to_hash(device)
         self.active_device = device if activate
@@ -33,9 +29,9 @@ module S2D
         default = devices[:default]
 
         if default.nil?
-          raise "No default profile set"
+          raise "No default device configured"
         else
-          devices[default]
+          device(default)
         end
       end
 

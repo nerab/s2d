@@ -8,11 +8,14 @@ def die(msg, code = 1)
   exit(code)
 end
 
+# TODO Add wizard for initial device config
+# TODO Add parameters for selecting the default device
+
 device = 'iPhone' # TODO Add --device parameter
 verbose = true    # TODO Add --verbose parameter
 
 if device
-  target = S2D::Configuration::Repository.instance.devices[device.to_sym]
+  target = S2D::Configuration::Repository.instance.device(device.to_sym)
   die("No device #{device} not configured") if target.nil?
 else
   target = S2D::Configuration::Repository.instance.active_device
@@ -24,13 +27,22 @@ message = S2D::Message.new
 if ARGV.size > 0
   message.body = ARGV.join(' ')
 else
-  puts 'Type your message and end with Control-D.' if verbose
+  puts 'Type your message and end with Control-D.' if verbose && STDIN.tty?
   message.body = ARGF.read
 end
 
 if message.invalid?
   die('Invalid message') # TODO Add message.errors from ActiveSupport::Validations
 else
-  puts "Delivering your message via #{target.transport}" if verbose
-  target.deliver(message)
+  begin
+    puts "Delivering your message via #{target.transport}" if verbose
+    target.deliver(message)
+    puts "Done." if verbose
+  rescue
+    if verbose
+      die($!.backtrace.join('\n'))
+    else
+      die($!.message)
+    end
+  end
 end

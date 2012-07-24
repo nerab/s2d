@@ -5,6 +5,7 @@ module S2D
 
       def initialize(config)
         super(config)
+        ::Prowler.logger.level = Logger::WARN
         @prowler = ::Prowler.new(:application => $0, :api_key => config[:api_key])
       end
 
