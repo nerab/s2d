@@ -3,12 +3,20 @@
 require 'bundler'
 Bundler.require
 
-device = File.basename($0)
-target = S2D::Device.lookup(device)
+def die(msg, code = 1)
+  STDERR.puts(msg)
+  exit(code)
+end
 
-if target.nil?
-  STDERR.puts "Device #{device} not configured"
-  exit 1
+device = 'iPhone' # TODO Add --device parameter
+verbose = true    # TODO Add --verbose parameter
+
+if device
+  target = S2D::Configuration::Repository.instance.devices[device.to_sym]
+  die("No device #{device} not configured") if target.nil?
+else
+  target = S2D::Configuration::Repository.instance.active_device
+  die("No active device configured") if target.nil?
 end
 
 message = S2D::Message.new
@@ -16,13 +24,13 @@ message = S2D::Message.new
 if ARGV.size > 0
   message.body = ARGV.join(' ')
 else
-  puts 'Type your message and end with Control-D.'
+  puts 'Type your message and end with Control-D.' if verbose
   message.body = ARGF.read
 end
 
 if message.invalid?
-  STDERR.puts "Invalid message"
-  exit 1
+  die('Invalid message') # TODO Add message.errors from ActiveSupport::Validations
 else
+  puts "Delivering your message via #{target.transport}" if verbose
   target.deliver(message)
 end

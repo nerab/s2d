@@ -15,7 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = S2D::VERSION
 
-  gem.add_dependency 'prowler'
+  gem.add_dependency 'prowler', '~> 1.3'
+  gem.add_dependency 'activesupport', '~> 3.2'
 
   gem.add_development_dependency 'guard-test', '~> 0.5'
   gem.add_development_dependency 'guard-bundler', '~> 1.0'

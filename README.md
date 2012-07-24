@@ -1,7 +1,7 @@
 s2d - Send to Device
 ====================
 
-Send text and documentation to various devices from the command line.
+Send text and documentation from the command line to various devices.
 
 Examples
 --------
@@ -20,30 +20,29 @@ I am mostly working on the command line, therefore I want something that works a
 
 All of these commands are actualy aliased versions of the `s2d` command:
 
-    alias 2iphone="s2d iPhone" # assumes that s2d has a device called 'iPhone' configured
-    alias 2kindle="s2d Kindle"
-    alias 2ipad="s2d iPad"
+    # assuming that s2d has a device called 'iPhone' configured
+    alias 2iphone="s2d --device=iPhone"
+    alias 2kindle="s2d --device=Kindle"
+    alias 2ipad="s2d --device=iPad"
 
 Concepts
-===============
+========
 
 Target Device
 -------------
-Identifies a device. Holds device address and transport. Examples are my iPhone, my Kindle or my girlfriend's iPad.
+Identifies a device. Holds device name and transport. Examples names are 'iPhone', 'MyKindle' or 'Paula's iPad'.
 
 Transport
 ---------
 A transport defines how to reach a device and holds all information required to reach it:
 
+  * [Prowl](http://www.prowlapp.com/) (for iPhone/iPad)
+
+Not implemented yet:
+
   * Mail
   * SMS
   * Twitter DM
-  * Jabber
-  * [Boxcar](http://boxcar.io/)
-  * [Prowl](http://www.prowlapp.com/) (for iPhone/iPad)
-    - [prowler](https://github.com/pixeltrix/prowler)
-  * [Urban Airship](http://urbanairship.com/)
-  * [Xtify](http://xtify.com/)
   * Custom (potentially requires a device-specific app e.g. on the iPhone)
 
 Delivery Strategy
