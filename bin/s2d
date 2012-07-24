@@ -28,7 +28,12 @@ if ARGV.size > 0
   message.body = ARGV.join(' ')
 else
   puts 'Type your message and end with Control-D.' if verbose && STDIN.tty?
-  message.body = ARGF.read
+
+  begin
+    message.body = ARGF.read
+  rescue Interrupt
+    die('Cancelled.')
+  end
 end
 
 if message.invalid?
