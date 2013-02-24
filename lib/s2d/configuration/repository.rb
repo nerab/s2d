@@ -1,6 +1,9 @@
 require 'singleton'
 require 'yaml'
 
+#
+# Concept based on [t](https://github.com/sferik/t)'s RCFile
+#
 module S2D
   module Configuration
     class Repository
